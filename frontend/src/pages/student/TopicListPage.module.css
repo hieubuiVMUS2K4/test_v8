@@ -1,0 +1,271 @@
+/* Simple Subjects Page Styling - Minimal & Clean */
+
+/* Base styles */
+.subjectsPage {
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'Inter', Arial, sans-serif;
+  padding: 0;
+}
+
+/* Header section */
+.header {
+  background: #2563eb;
+  color: white;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.header p {
+  font-size: 15px;
+  opacity: 0.92;
+  margin: 0;
+  font-weight: 400;
+}
+
+.headerActions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.logoutBtn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.logoutBtn:hover {
+  background: #dc2626;
+}
+
+/* Main section */
+.main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px 12px;
+}
+
+/* Progress overview */
+.progressSection {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.progressStats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 12px;
+}
+
+.statItem {
+  font-size: 16px;
+  color: #2563eb;
+}
+
+.statNumber {
+  font-weight: 700;
+  font-size: 20px;
+  margin-right: 4px;
+}
+
+.statLabel {
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* Subjects grid */
+.subjectsSection {
+  margin-top: 12px;
+}
+
+.sectionTitle {
+  font-size: 19px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #2563eb;
+  text-align: left;
+}
+
+.subjectsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 16px;
+}
+
+/* Subject card */
+.subjectCard {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #e5e7eb;
+  border: 1px solid #e5e7eb;
+  padding: 18px 14px;
+  position: relative;
+  transition: box-shadow 0.15s;
+}
+
+.subjectCard:hover {
+  box-shadow: 0 6px 18px #cbd5e1;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.cardDescription {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.cardMeta {
+  font-size: 13px;
+  color: #2563eb;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* Status badges */
+.statusBadge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 2px 10px;
+  margin-bottom: 6px;
+}
+
+.statusBadge.completed {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.statusBadge.failed {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.statusBadge.inProgress {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.statusBadge.available {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.statusBadge.locked {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* Score info */
+.scoreInfo {
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #059669;
+}
+
+.scoreLabel {
+  font-weight: 500;
+  margin-right: 6px;
+}
+
+.scoreValue {
+  font-weight: 700;
+}
+
+/* Card actions */
+.cardActions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 8px 14px;
+  border-radius: 5px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+  transition: background 0.2s;
+}
+
+button.viewResultBtn {
+  background: #059669;
+}
+
+button.retakeBtn {
+  background: #d97706;
+}
+
+button.startBtn {
+  background: #2563eb;
+}
+
+button.lockedBtn {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+button:disabled {
+  opacity: 0.6;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .main {
+    padding: 12px 4px;
+  }
+  .subjectsGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .progressStats {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 12px;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.subjectCard.locked {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.subjectCard.locked .cardActions button {
+  background-color: #999;
+  color: #fff;
+  cursor: not-allowed;
+}

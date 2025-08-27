@@ -1,0 +1,178 @@
+/* Layout */
+.main {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 2.5rem 3rem 4rem;
+	font-family: var(--font-family-sans, system-ui, 'Segoe UI', Roboto, Arial);
+}
+
+/* Section title + header button */
+.sectionTitle {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0 0 2rem 0;
+	font-size: 2rem;
+	font-weight: 700;
+	color: #0f172a;
+	gap: 1.25rem;
+	flex-wrap: wrap;
+}
+
+/* Grid of schedule cards */
+.batchScheduleGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+	gap: 1.75rem;
+}
+
+/* Card */
+.batchScheduleCard {
+	position: relative;
+	background: #ffffff;
+	border-radius: 20px;
+	padding: 1.75rem 1.75rem 1.25rem;
+	box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(0,0,0,0.04);
+	border-left: 6px solid #94a3b8;
+	display: flex;
+	flex-direction: column;
+	gap: 1.1rem;
+	transition: all .25s ease;
+}
+
+.batchScheduleCard:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 12px 28px -4px rgba(15,23,42,.15),0 4px 12px rgba(0,0,0,.08);
+}
+
+.activeBatchSchedule { border-left-color: #10b981; background: #f0fdfa; }
+.activeBatchSchedule:hover { background:#ecfdf5; }
+
+/* Card header */
+.batchScheduleHeader { display:flex; justify-content:space-between; align-items:flex-start; }
+.batchScheduleHeader h3 { margin:0; font-size:1.4rem; font-weight:600; color:#0f172a; }
+
+/* Status badge container */
+.scheduleStatus { display:flex; }
+.scheduleStatus span { border-radius:9999px; padding:0.35rem 0.75rem; font-size:.7rem; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
+.activeStatus { background:#d1fae5; color:#047857; }
+.upcomingStatus { background:#dbeafe; color:#1d4ed8; }
+.completedStatus { background:#f1f5f9; color:#64748b; }
+
+/* Info */
+.batchScheduleInfo { display:flex; flex-direction:column; gap:.75rem; font-size:.9rem; }
+.scheduleTime, .scheduleNotes { display:flex; align-items:center; gap:.55rem; color:#475569; font-size:.85rem; }
+.scheduleNotes { font-style: italic; color:#64748b; }
+.scheduleTime i, .scheduleNotes i { width:1rem; text-align:center; color:#64748b; }
+.scheduleMeta { font-size:.7rem; color:#64748b; letter-spacing:.3px; }
+
+/* Footer */
+.batchScheduleFooter { margin-top:auto; padding-top:1rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; }
+.subjectsIncluded { font-size:.8rem; color:#475569; display:flex; align-items:center; gap:.45rem; font-weight:500; }
+.subjectsIncluded i { color:#64748b; }
+
+/* Buttons */
+.addBatchBtn {
+	background: linear-gradient(135deg, #667eea 0%, #4f46e5 40%, #4338ca 100%);
+	color:#fff;
+	border:none;
+	padding:.9rem 1.6rem;
+	border-radius:14px;
+	font-size:.8rem;
+	font-weight:600;
+	cursor:pointer;
+	letter-spacing:.75px;
+	text-transform:uppercase;
+	box-shadow:0 6px 18px -3px rgba(79,70,229,.45),0 2px 6px rgba(0,0,0,.15);
+	position:relative;
+	overflow:hidden;
+	transition:all .35s ease;
+}
+.addBatchBtn:before {
+	content:""; position:absolute; inset:0; background:linear-gradient(120deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.25) 45%,rgba(255,255,255,0) 90%); transform:translateX(-60%); transition:transform .6s ease; }
+.addBatchBtn:hover { transform:translateY(-3px); box-shadow:0 12px 30px -6px rgba(79,70,229,.55),0 4px 14px rgba(0,0,0,.18); }
+.addBatchBtn:hover:before { transform:translateX(80%); }
+.addBatchBtn:active { transform:translateY(-1px); }
+
+.deleteBatchBtn, .addFirstBatchBtn {
+	background:#fee2e2; color:#dc2626; border:none; padding:.55rem .9rem; border-radius:8px; font-size:.7rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:.4rem; transition:all .25s ease; }
+.deleteBatchBtn:hover { background:#fecaca; }
+.addFirstBatchBtn { background:#dbeafe; color:#1d4ed8; font-size:.8rem; padding:.75rem 1.25rem; }
+.addFirstBatchBtn:hover { background:#bfdbfe; transform:translateY(-2px); }
+
+/* Title actions */
+.titleActions { display:flex; align-items:center; gap:.75rem; }
+.toggleViewBtn { background:#f1f5f9; border:1px solid #e2e8f0; color:#334155; padding:.7rem 1.1rem; border-radius:12px; font-size:.7rem; font-weight:600; letter-spacing:.5px; cursor:pointer; transition:all .25s; }
+.toggleViewBtn:hover { background:#e2e8f0; }
+.emptyDeptCard { background:#f8fafc; border-left-color:#cbd5e1; }
+.noScheduleBody { padding:.5rem 0 .25rem; font-size:.8rem; color:#64748b; }
+.addInlineBtn { background:#dbeafe; color:#1d4ed8; border:none; padding:.55rem .9rem; border-radius:8px; font-size:.7rem; font-weight:600; cursor:pointer; transition:all .25s; }
+.addInlineBtn:hover { background:#bfdbfe; }
+.noStatus { background:#f1f5f9; color:#64748b; padding:.35rem .75rem; border-radius:9999px; font-size:.65rem; font-weight:600; letter-spacing:.5px; }
+.scheduleList { display:flex; flex-direction:column; gap:.6rem; }
+.scheduleItem { display:flex; justify-content:space-between; gap:1rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:.65rem .85rem; transition:all .2s; }
+.scheduleItem:hover { background:#f1f5f9; }
+.activeSchedule { border-color:#10b981; background:#ecfdf5; }
+.scheduleInfo { display:flex; flex-direction:column; gap:.3rem; font-size:.7rem; }
+.scheduleLine { display:flex; align-items:center; gap:.45rem; color:#475569; }
+.scheduleLine i { width:.9rem; text-align:center; color:#64748b; font-size:.7rem; }
+.scheduleItemActions { display:flex; align-items:flex-start; gap:.4rem; }
+.scheduleDeleteBtn { background:#fee2e2; color:#dc2626; border:none; padding:.4rem .55rem; border-radius:8px; cursor:pointer; font-size:.65rem; display:inline-flex; align-items:center; justify-content:center; transition:all .2s; }
+.scheduleDeleteBtn:hover { background:#fecaca; }
+.footerActions { display:flex; gap:.5rem; }
+
+/* Empty state */
+.emptySchedule { grid-column:1 / -1; background:#f8fafc; border-radius:16px; padding:3rem 2rem; text-align:center; color:#94a3b8; font-size:.95rem; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.emptySchedule p { margin:0; }
+
+/* Modal */
+.modalOverlay { position:fixed; inset:0; background:rgba(15,23,42,0.55); backdrop-filter:blur(4px); display:flex; justify-content:center; align-items:center; padding:1.5rem; z-index:1000; }
+.modal { width:100%; max-width:560px; background:#ffffff; border-radius:22px; box-shadow:0 20px 50px -8px rgba(15,23,42,.35),0 8px 18px rgba(0,0,0,.12); overflow:hidden; animation:pop .4s cubic-bezier(.32,.72,.29,1); }
+@keyframes pop { 0% { opacity:0; transform:translateY(25px) scale(.95);} 100% { opacity:1; transform:translateY(0) scale(1);} }
+.modalHeader { padding:1.3rem 1.5rem; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; }
+.modalHeader h3 { margin:0; font-size:1.15rem; font-weight:600; color:#0f172a; }
+.closeBtn { background:none; border:none; color:#64748b; font-size:1.2rem; cursor:pointer; padding:.25rem .4rem; border-radius:8px; transition:all .25s; }
+.closeBtn:hover { background:#f1f5f9; color:#334155; }
+.modalBody { padding:1.6rem 1.6rem 2rem; max-height:70vh; overflow-y:auto; }
+
+/* Form */
+.formGroup { margin-bottom:1.15rem; }
+.formGroup label { display:block; margin:0 0 .45rem; font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.6px; color:#475569; }
+.formControl { width:100%; padding:.7rem .9rem; border:1px solid #e2e8f0; border-radius:10px; font-size:.85rem; background:#f8fafc; color:#0f172a; transition:all .25s ease; }
+.formControl:focus { outline:none; border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.25); background:#fff; }
+.formRow { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.formControl:disabled { background:#f1f5f9; cursor:not-allowed; }
+
+.batchInfoText { background:#eef2ff; border-left:5px solid #6366f1; padding:1rem 1rem 1rem 1.1rem; border-radius:12px; font-size:.75rem; color:#3730a3; display:flex; gap:.75rem; line-height:1.4; }
+.batchInfoText i { color:#4f46e5; margin-top:.15rem; }
+
+.modalActions { display:flex; justify-content:flex-end; gap:.9rem; margin-top:1.5rem; }
+.cancelBtn, .saveBtn { border:none; padding:.75rem 1.25rem; font-size:.78rem; font-weight:600; border-radius:10px; cursor:pointer; letter-spacing:.5px; display:inline-flex; align-items:center; gap:.5rem; transition:all .25s; }
+.cancelBtn { background:#f1f5f9; color:#475569; }
+.cancelBtn:hover { background:#e2e8f0; }
+.saveBtn { background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; box-shadow:0 4px 14px -3px rgba(99,102,241,.55); }
+.saveBtn:hover { background:linear-gradient(135deg,#4f46e5,#4338ca); }
+
+/* Filters */
+.filterBar { display:flex; flex-wrap:wrap; gap:1rem; margin:0 0 1.75rem; background:#f8fafc; padding:1rem 1.25rem; border-radius:16px; border:1px solid #e2e8f0; box-shadow:0 2px 6px rgba(0,0,0,.04); }
+.filterGroup { display:flex; flex-direction:column; gap:.4rem; min-width:140px; }
+.filterGroup label { font-size:.65rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:#475569; }
+.filterControl { padding:.55rem .75rem; border:1px solid #dbe2ea; border-radius:10px; background:#ffffff; font-size:.8rem; color:#0f172a; transition:all .25s ease; }
+.filterControl:focus { outline:none; border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,.25); }
+.filterActions { display:flex; align-items:flex-end; }
+.resetFilterBtn { background:#e2e8f0; border:none; color:#334155; font-size:.7rem; font-weight:600; padding:.6rem 1rem; border-radius:10px; cursor:pointer; letter-spacing:.5px; transition:all .25s; }
+.resetFilterBtn:hover { background:#cbd5e1; }
+
+/* Loading & Error */
+.scheduleLoading, .scheduleError { padding:3rem 1rem; text-align:center; font-size:1rem; }
+.scheduleError { color:#dc2626; }
+
+/* Responsive */
+@media (max-width: 860px) { .batchScheduleGrid { grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); } }
+@media (max-width: 640px) {
+	.main { padding:2rem 1.25rem 3.5rem; }
+	.sectionTitle { font-size:1.6rem; }
+	.formRow { grid-template-columns:1fr; }
+	.batchScheduleCard { padding:1.35rem 1.35rem 1rem; }
+	.addBatchBtn { width:100%; text-align:center; }
+}
