@@ -137,12 +137,6 @@ const ReportAnalyticsPage = () => {
         >
           Báo cáo chi tiết
         </button>
-        <button 
-          className={`${styles.tab} ${activeTab === 'completion' ? styles.active : ''}`}
-          onClick={() => setActiveTab('completion')}
-        >
-          Tiến độ sinh viên
-        </button>
       </div>
 
       {/* Overview Tab */}
@@ -168,9 +162,9 @@ const ReportAnalyticsPage = () => {
             </div>
           </div>
 
-          {/* Topic Statistics */}
+          {/* Student Statistics */}
           <div className={styles.section}>
-            <h2>Thống kê theo chuyên đề</h2>
+            <h2>Thống kê theo sinh viên</h2>
             <p className={styles.note}>
               <strong>Tiêu chí đạt:</strong> Điểm số ≥ 80% (thay vì điểm đạt của từng chuyên đề)
             </p>
@@ -178,8 +172,10 @@ const ReportAnalyticsPage = () => {
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>Chuyên đề</th>
-                    <th>Điểm đạt</th>
+                    <th>Mã sinh viên</th>
+                    <th>Họ tên</th>
+                    <th>Lớp</th>
+                    <th>Ngành</th>
                     <th>Tổng lượt thi</th>
                     <th>Đạt (≥80%)</th>
                     <th>Không đạt (&lt;80%)</th>
@@ -189,18 +185,24 @@ const ReportAnalyticsPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {statistics.topicStatistics.map(topic => (
-                    <tr key={topic.id}>
-                      <td>{topic.topic_name}</td>
-                      <td>{topic.pass_score}</td>
-                      <td>{topic.total_attempts}</td>
-                      <td className={styles.passed}>{topic.passed_count}</td>
-                      <td className={styles.failed}>{topic.failed_count}</td>
-                      <td>{topic.average_score || 0}</td>
-                      <td>{topic.highest_score || 0}</td>
-                      <td>{topic.lowest_score || 0}</td>
+                  {statistics.studentStatistics ? statistics.studentStatistics.map(student => (
+                    <tr key={student.id}>
+                      <td>{student.student_code}</td>
+                      <td>{student.student_name}</td>
+                      <td>{student.class_name}</td>
+                      <td>{student.major_name}</td>
+                      <td>{student.total_attempts}</td>
+                      <td className={styles.passed}>{student.passed_count}</td>
+                      <td className={styles.failed}>{student.failed_count}</td>
+                      <td>{student.average_score || 0}</td>
+                      <td>{student.highest_score || 0}</td>
+                      <td>{student.lowest_score || 0}</td>
                     </tr>
-                  ))}
+                  )) : (
+                    <tr>
+                      <td colSpan="10">Không có dữ liệu thống kê sinh viên</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -219,7 +221,6 @@ const ReportAnalyticsPage = () => {
                     <th>Khoa</th>
                     <th>Ngành</th>
                     <th>Tổng SV</th>
-                    <th>Tổng bài thi</th>
                     <th>SV đạt</th>
                     <th>SV không đạt</th>
                     <th>Điểm TB</th>
@@ -231,7 +232,6 @@ const ReportAnalyticsPage = () => {
                       <td>{dept.department_name}</td>
                       <td>{dept.major_name}</td>
                       <td>{dept.total_students}</td>
-                      <td>{dept.total_exams}</td>
                       <td className={styles.passed}>{dept.passed_students || 0}</td>
                       <td className={styles.failed}>{dept.failed_students || 0}</td>
                       <td>{dept.average_score || 0}</td>

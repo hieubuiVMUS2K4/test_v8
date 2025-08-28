@@ -16,6 +16,7 @@ import ExamHistoryPage from './pages/student/ExamHistoryPage';
 import DashboardPage from './pages/admin/DashboardPage';
 import TopicManagementPage from './pages/admin/TopicManagementPage';
 import StudentManagementPage from './pages/admin/StudentManagementPage';
+import AcademicStructureManagementPage from './pages/admin/AcademicStructureManagementPage';
 import ReportAnalyticsPage from './pages/admin/ReportAnalyticsPage';
 import SchedulesManagementPage from './pages/admin/SchedulesManagementPage';
 
@@ -110,6 +111,14 @@ function App() {
           <ProtectedRoute requiredRole="admin">
             <AdminLayout>
               <StudentManagementPage />
+            </AdminLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/admin/structure" element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminLayout>
+              <AcademicStructureManagementPage />
             </AdminLayout>
           </ProtectedRoute>
         } />

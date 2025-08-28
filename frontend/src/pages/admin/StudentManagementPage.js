@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaUsers, FaPlus, FaFileImport, FaSearch, FaSpinner, FaExclamationCircle, FaUser, FaEye, FaWrench, FaKey, FaLock, FaUnlock, FaTimes, FaChevronLeft, FaChevronRight, FaUsersSlash, FaUserCheck, FaUserTimes, FaUserShield } from 'react-icons/fa';
+import { FaUsers, FaPlus, FaFileImport, FaSearch, FaSpinner, FaExclamationCircle, FaUser, FaEye, FaEdit, FaTrash, FaKey, FaLock, FaUnlock, FaTimes, FaChevronLeft, FaChevronRight, FaUsersSlash, FaUserCheck, FaUserTimes, FaUserShield } from 'react-icons/fa';
 import styles from './StudentManagementPage.module.css';
 import SafeDropdown from '../../components/SafeDropdown';
 import { 
@@ -648,7 +648,7 @@ const AdminStudentsPage = () => {
             onClick={handleBulkDelete}
             disabled={saving}
           >
-            <i className="fas fa-trash"></i>
+            <FaTrash />
             Xóa ({selectedStudents.length})
           </button>
         )}
@@ -730,7 +730,7 @@ const AdminStudentsPage = () => {
                       title="Xem chi tiết"
                       disabled={saving}
                     >
-                      <FaEye style={{fontSize:'0.9rem'}} />
+                      <FaEye />
                     </button>
                     <button
                       className={`${styles.actionBtn} ${styles.editBtn}`}
@@ -738,7 +738,7 @@ const AdminStudentsPage = () => {
                       title="Chỉnh sửa"
                       disabled={saving}
                     >
-                      <FaWrench style={{fontSize:'0.9rem'}} />
+                      <FaEdit />
                     </button>
                     <button
                       className={`${styles.actionBtn} ${styles.resetBtn}`}
@@ -746,7 +746,7 @@ const AdminStudentsPage = () => {
                       title="Reset mật khẩu"
                       disabled={saving}
                     >
-                      <FaKey style={{fontSize:'0.85rem'}} />
+                      <FaKey />
                     </button>
                     <button
                       className={`${styles.actionBtn} ${styles.statusBtn}`}
@@ -757,7 +757,7 @@ const AdminStudentsPage = () => {
                       title={student.status === 'active' ? 'Khóa tài khoản' : 'Kích hoạt tài khoản'}
                       disabled={saving}
                     >
-                      {student.status === 'active' ? <FaLock style={{fontSize:'0.85rem'}} /> : <FaUnlock style={{fontSize:'0.85rem'}} />}
+                      {student.status === 'active' ? <FaLock /> : <FaUnlock />}
                     </button>
                     <button
                       className={`${styles.actionBtn} ${styles.deleteBtn}`}
@@ -765,7 +765,7 @@ const AdminStudentsPage = () => {
                       title="Xóa"
                       disabled={saving}
                     >
-                      <FaTimes style={{fontSize:'0.85rem'}} />
+                      <FaTrash />
                     </button>
                   </div>
                 </td>

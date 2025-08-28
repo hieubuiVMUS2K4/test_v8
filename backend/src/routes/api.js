@@ -4,6 +4,7 @@ const AuthController = require('../controllers/authController');
 const TopicController = require('../controllers/topicController');
 const UserProgressController = require('../controllers/userProgressController');
 const StudentController = require('../controllers/studentController');
+const AcademicStructureController = require('../controllers/academicStructureController');
 const DashboardController = require('../controllers/dashboardController');
 const ScheduleController = require('../controllers/scheduleController');
 const StudentSubjectsController = require('../controllers/studentSubjectsController');
@@ -53,9 +54,22 @@ router.delete('/admin/students', authenticateToken, requireAdmin, StudentControl
 router.patch('/admin/students/:id/status', authenticateToken, requireAdmin, StudentController.updateStudentStatus);
 
 // Academic Structure Routes (Departments, Majors, Classes)
-router.get('/admin/departments', authenticateToken, requireAdmin, StudentController.getDepartments);
-router.get('/admin/departments/:departmentId/majors', authenticateToken, requireAdmin, StudentController.getMajorsByDepartment);
-router.get('/admin/majors/:majorId/classes', authenticateToken, requireAdmin, StudentController.getClassesByMajor);
+router.get('/admin/departments', authenticateToken, requireAdmin, AcademicStructureController.getAllDepartments);
+router.post('/departments', authenticateToken, requireAdmin, AcademicStructureController.createDepartment);
+router.put('/departments/:id', authenticateToken, requireAdmin, AcademicStructureController.updateDepartment);
+router.delete('/departments/:id', authenticateToken, requireAdmin, AcademicStructureController.deleteDepartment);
+
+router.get('/admin/departments/:departmentId/majors', authenticateToken, requireAdmin, AcademicStructureController.getMajorsByDepartment);
+router.get('/majors', authenticateToken, requireAdmin, AcademicStructureController.getAllMajors);
+router.post('/majors', authenticateToken, requireAdmin, AcademicStructureController.createMajor);
+router.put('/majors/:id', authenticateToken, requireAdmin, AcademicStructureController.updateMajor);
+router.delete('/majors/:id', authenticateToken, requireAdmin, AcademicStructureController.deleteMajor);
+
+router.get('/admin/majors/:majorId/classes', authenticateToken, requireAdmin, AcademicStructureController.getClassesByMajor);
+router.get('/classes', authenticateToken, requireAdmin, AcademicStructureController.getAllClasses);
+router.post('/classes', authenticateToken, requireAdmin, AcademicStructureController.createClass);
+router.put('/classes/:id', authenticateToken, requireAdmin, AcademicStructureController.updateClass);
+router.delete('/classes/:id', authenticateToken, requireAdmin, AcademicStructureController.deleteClass);
 
 // Schedule Management Routes
 router.get('/admin/schedules', authenticateToken, requireAdmin, ScheduleController.getSchedules);

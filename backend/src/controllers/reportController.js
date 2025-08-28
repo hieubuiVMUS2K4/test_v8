@@ -84,7 +84,6 @@ class ReportController {
           m.id as major_id,
           m.name as major_name,
           COUNT(DISTINCT s.id) as total_students,
-          COUNT(e.id) as total_exams,
           ROUND(AVG(e.score), 2) as average_score
         FROM Departments d
         LEFT JOIN Majors m ON d.id = m.department_id
@@ -97,6 +96,33 @@ class ReportController {
       `;
 
       const departmentStats = await DatabaseService.execute(departmentStatsQuery);
+
+      // Lấy thống kê theo sinh viên
+      const studentStatsQuery = `
+        SELECT 
+          s.id,
+          s.student_code,
+          u.full_name as student_name,
+          c.name as class_name,
+          m.name as major_name,
+          COUNT(e.id) as total_attempts,
+          COUNT(CASE WHEN e.score >= t.pass_score THEN 1 END) as passed_count,
+          COUNT(CASE WHEN e.score < t.pass_score THEN 1 END) as failed_count,
+          ROUND(AVG(e.score), 2) as average_score,
+          MAX(e.score) as highest_score,
+          MIN(e.score) as lowest_score
+        FROM Students s
+        LEFT JOIN Users u ON s.user_id = u.id
+        LEFT JOIN Classes c ON s.class_id = c.id
+        LEFT JOIN Majors m ON c.major_id = m.id
+        LEFT JOIN Exams e ON s.id = e.student_id AND e.status = 'SUBMITTED'
+        LEFT JOIN Topics t ON e.topic_id = t.id
+        GROUP BY s.id, s.student_code, u.full_name, c.name, m.name
+        HAVING total_attempts > 0
+        ORDER BY s.student_code
+      `;
+
+      const studentStats = await DatabaseService.execute(studentStatsQuery);
 
   // Tính toán sinh viên đạt/không đạt cho từng khoa/ngành
   // Sinh viên đạt = đã làm hết tất cả chuyên đề và mỗi chuyên đề đạt >= pass_score tương ứng
@@ -161,7 +187,7 @@ class ReportController {
             ? Math.round((examStats[0].passed_exams / examStats[0].total_exams) * 100) 
             : 0
         },
-        topicStatistics: topicStats,
+        studentStatistics: studentStats,
         departmentStatistics: departmentStats
       };
 

@@ -3,11 +3,29 @@ const connection = require('../config/database');
 class Exam {
   static async create(studentId, topicId) {
     try {
-      const [result] = await connection.promise().query(
-        "INSERT INTO Exams (student_id, topic_id, start_time, status) VALUES (?, ?, NOW(), 'IN_PROGRESS')",
-        [studentId, topicId]
-      );
-      return result.insertId;
+      // Sử dụng INSERT ... ON DUPLICATE KEY UPDATE để ghi đè bản ghi cũ
+      const [result] = await connection.promise().query(`
+        INSERT INTO Exams (student_id, topic_id, start_time, status, attempts_count, first_attempt_date, last_attempt_date) 
+        VALUES (?, ?, NOW(), 'IN_PROGRESS', 1, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE 
+          start_time = NOW(),
+          status = 'IN_PROGRESS',
+          attempts_count = attempts_count + 1,
+          last_attempt_date = NOW(),
+          updated_at = NOW()
+      `, [studentId, topicId]);
+      
+      // Lấy exam ID (có thể là insert mới hoặc update)
+      if (result.insertId > 0) {
+        return result.insertId;
+      } else {
+        // Trường hợp update, lấy ID từ bản ghi đã tồn tại
+        const [rows] = await connection.promise().query(
+          "SELECT id FROM Exams WHERE student_id = ? AND topic_id = ?",
+          [studentId, topicId]
+        );
+        return rows[0]?.id;
+      }
     } catch (error) {
       throw new Error(`Database error: ${error.message}`);
     }
@@ -67,25 +85,53 @@ class Exam {
     try {
       await conn.beginTransaction();
 
-      // Cập nhật exam
-      await conn.query(
-        "UPDATE Exams SET end_time = NOW(), score = ?, status = 'SUBMITTED' WHERE id = ?",
-        [score, examId]
+      // Lấy thông tin exam để tính duration
+      const [examInfo] = await conn.query(
+        "SELECT student_id, topic_id, start_time FROM Exams WHERE id = ?", 
+        [examId]
       );
+      
+      if (examInfo.length === 0) {
+        throw new Error('Exam not found');
+      }
+      
+      const exam = examInfo[0];
+      const duration = Math.ceil((new Date() - new Date(exam.start_time)) / (1000 * 60)); // minutes
+
+      // Sử dụng INSERT ... ON DUPLICATE KEY UPDATE để ghi đè kết quả
+      await conn.query(`
+        INSERT INTO Exams (student_id, topic_id, start_time, end_time, score, status, duration_minutes, attempts_count, first_attempt_date, last_attempt_date) 
+        VALUES (?, ?, ?, NOW(), ?, 'SUBMITTED', ?, 1, ?, NOW())
+        ON DUPLICATE KEY UPDATE 
+          end_time = NOW(),
+          score = VALUES(score),
+          status = 'SUBMITTED',
+          duration_minutes = VALUES(duration_minutes),
+          attempts_count = attempts_count + 1,
+          last_attempt_date = NOW(),
+          updated_at = NOW()
+      `, [exam.student_id, exam.topic_id, exam.start_time, score, duration, exam.start_time]);
+
+      // Lấy exam ID sau khi insert/update
+      const [finalExam] = await conn.query(
+        "SELECT id FROM Exams WHERE student_id = ? AND topic_id = ?",
+        [exam.student_id, exam.topic_id]
+      );
+      const finalExamId = finalExam[0].id;
 
       // Xóa câu trả lời cũ nếu có
-      await conn.query("DELETE FROM ExamAnswers WHERE exam_id = ?", [examId]);
+      await conn.query("DELETE FROM ExamAnswers WHERE exam_id = ?", [finalExamId]);
 
       // Lưu câu trả lời mới
       for (const answer of answers) {
         await conn.query(
           "INSERT INTO ExamAnswers (exam_id, question_id, answer_id, is_selected) VALUES (?, ?, ?, ?)",
-          [examId, answer.questionId, answer.answerId, true]
+          [finalExamId, answer.questionId, answer.answerId, true]
         );
       }
 
       await conn.commit();
-      return true;
+      return finalExamId;
     } catch (error) {
       await conn.rollback();
       throw new Error(`Database error: ${error.message}`);

@@ -250,7 +250,7 @@
 
 .admin-content {
   flex: 1;
-  padding: 2rem;
+  padding: 1rem;
   background-color: #f8f9fa;
   overflow-y: auto;
 }

@@ -34,7 +34,7 @@
 }
 
 .container { 
-  padding:.1rem 1rem 1.5rem; 
+  padding:.1rem .5rem 1rem; 
   background:var(--color-bg); 
   min-height:100vh; 
   font-family:var(--font-stack); 
@@ -281,7 +281,7 @@
 .table th { 
   background:var(--color-surface-alt); 
   padding:.5rem .6rem; 
-  text-align:left; 
+  text-align:center; 
   font-weight:600; 
   letter-spacing:.4px; 
   font-size:.68rem; 
@@ -297,6 +297,7 @@
   padding:.55rem .6rem; 
   border-bottom:1px solid #eef1f4; 
   color:var(--color-text); 
+  text-align:center;
 }
 
 .table tbody tr:hover { 
@@ -378,21 +379,23 @@
   display:flex; 
   gap:.35rem; 
   align-items:center; 
+  justify-content:center;
 }
 
 .actionBtn { 
-  width:28px; 
-  height:28px; 
-  border:none; 
-  border-radius:var(--radius-sm); 
-  background:var(--color-surface-alt); 
-  color:var(--color-text-mute); 
-  display:flex; 
-  align-items:center; 
-  justify-content:center; 
-  font-size:.68rem; 
-  cursor:pointer; 
-  transition:var(--transition); 
+  width: 34px; 
+  height: 34px; 
+  border: none; 
+  border-radius: var(--radius-sm); 
+  background: var(--color-surface-alt); 
+  color: var(--color-text-mute); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 1.1rem; 
+  cursor: pointer; 
+  transition: var(--transition); 
+  padding: .35rem;
 }
 
 .actionBtn:hover { 
@@ -411,32 +414,32 @@
 }
 
 .editBtn { 
-  background:var(--color-warning-soft); 
-  color:var(--color-warning); 
+  background:#fef3c7; 
+  color:#b45309; 
 }
 
 .editBtn:hover { 
-  background:var(--color-warning); 
+  background:#d97706; 
   color:#fff; 
 }
 
 .questionBtn { 
-  background:var(--color-info-soft); 
-  color:var(--color-info); 
+  background:#e0f2fe; 
+  color:#0369a1; 
 }
 
 .questionBtn:hover { 
-  background:var(--color-info); 
+  background:#0369a1; 
   color:#fff; 
 }
 
 .deleteBtn { 
-  background:var(--color-danger-soft); 
-  color:var(--color-danger); 
+  background:#fdecec; 
+  color:#dc2626; 
 }
 
 .deleteBtn:hover { 
-  background:var(--color-danger); 
+  background:#dc2626; 
   color:#fff; 
 }
 
@@ -717,9 +720,9 @@
 }
 
 .questionActions .actionBtn {
-  width: 24px;
-  height: 24px;
-  font-size: 0.6rem;
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
 }
 
 .answersList {

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Student Import Structure</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .structure-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        .structure-table th, .structure-table td { 
+            border: 1px solid #ddd; 
+            padding: 8px; 
+            text-align: left; 
+        }
+        .structure-table th { background-color: #f5f5f5; }
+        .required { color: red; font-weight: bold; }
+        .optional { color: green; }
+        button { 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>🎓 Cấu Trúc Import Sinh Viên - VMU Quiz System</h1>
+    
+    <div class="section">
+        <h2>📋 Cấu trúc Excel cho Import Sinh Viên</h2>
+        <table class="structure-table">
+            <thead>
+                <tr>
+                    <th>Tên cột</th>
+                    <th>Tên cột thay thế</th>
+                    <th>Mô tả</th>
+                    <th>Ví dụ</th>
+                    <th>Bắt buộc</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>studentCode</code></td>
+                    <td><code>username</code></td>
+                    <td>Mã sinh viên (duy nhất)</td>
+                    <td>SV001, 2024001</td>
+                    <td class="required">Có</td>
+                </tr>
+                <tr>
+                    <td><code>fullName</code></td>
+                    <td><code>Họ tên</code></td>
+                    <td>Họ và tên đầy đủ</td>
+                    <td>Nguyễn Văn An</td>
+                    <td class="required">Có</td>
+                </tr>
+                <tr>
+                    <td><code>email</code></td>
+                    <td><code>Email</code></td>
+                    <td>Email sinh viên (duy nhất)</td>
+                    <td>an.nguyen@vmu.edu.vn</td>
+                    <td class="required">Có</td>
+                </tr>
+                <tr>
+                    <td><code>phoneNumber</code></td>
+                    <td><code>Số điện thoại</code></td>
+                    <td>Số điện thoại</td>
+                    <td>0123456789</td>
+                    <td class="required">Có</td>
+                </tr>
+                <tr>
+                    <td><code>classId</code></td>
+                    <td><code>Mã lớp</code></td>
+                    <td>ID của lớp học</td>
+                    <td>1, 2, 3</td>
+                    <td class="required">Có</td>
+                </tr>
+                <tr>
+                    <td><code>username</code></td>
+                    <td><code>studentCode</code></td>
+                    <td>Tên đăng nhập</td>
+                    <td>SV001</td>
+                    <td class="required">Có</td>
+                </tr>
+                <tr>
+                    <td><code>password</code></td>
+                    <td>-</td>
+                    <td>Mật khẩu đăng nhập</td>
+                    <td>123456</td>
+                    <td class="optional">Không (mặc định: 123456)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>🔧 Công cụ test</h2>
+        
+        <h3>1. Tạo file Excel mẫu</h3>
+        <button onclick="createSampleFile()">Tạo file Excel mẫu</button>
+        
+        <h3>2. Test đọc file Excel</h3>
+        <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="readStudentFile(event)">
+        
+        <h3>3. Kết quả phân tích</h3>
+        <pre id="result"></pre>
+    </div>
+
+    <div class="section">
+        <h2>📝 Backend Logic</h2>
+        <p><strong>Endpoint:</strong> <code>POST /api/students/import-excel</code></p>
+        <p><strong>Method:</strong> Multer file upload</p>
+        <p><strong>Process:</strong></p>
+        <ol>
+            <li>Upload file Excel qua multer</li>
+            <li>Đọc file bằng <code>xlsx.readFile()</code></li>
+            <li>Chuyển sheet đầu tiên thành JSON: <code>xlsx.utils.sheet_to_json()</code></li>
+            <li>Lặp qua từng dòng dữ liệu</li>
+            <li>Kiểm tra dữ liệu bắt buộc</li>
+            <li>Kiểm tra trùng lặp email/username</li>
+            <li>Tạo User record</li>
+            <li>Tạo Student record</li>
+            <li>Trả về danh sách sinh viên đã import</li>
+        </ol>
+    </div>
+
+    <script>
+        function createSampleFile() {
+            // Tạo dữ liệu mẫu cho import sinh viên
+            const sampleData = [
+                {
+                    studentCode: "SV001",
+                    fullName: "Nguyễn Văn An",
+                    email: "an.nguyen@vmu.edu.vn",
+                    phoneNumber: "0123456789",
+                    classId: "1",
+                    username: "SV001",
+                    password: "123456"
+                },
+                {
+                    studentCode: "SV002", 
+                    fullName: "Trần Thị Bình",
+                    email: "binh.tran@vmu.edu.vn",
+                    phoneNumber: "0987654321",
+                    classId: "2", 
+                    username: "SV002",
+                    password: "123456"
+                },
+                {
+                    studentCode: "SV003",
+                    fullName: "Lê Văn Cường",
+                    email: "cuong.le@vmu.edu.vn", 
+                    phoneNumber: "0345678901",
+                    classId: "1",
+                    username: "SV003", 
+                    password: "123456"
+                },
+                {
+                    studentCode: "SV004",
+                    "Họ tên": "Phạm Thị Dung",
+                    "Email": "dung.pham@vmu.edu.vn",
+                    "Số điện thoại": "0567890123",
+                    "Mã lớp": "3",
+                    username: "SV004",
+                    password: "123456"
+                }
+            ];
+
+            // Tạo workbook
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(sampleData);
+            
+            XLSX.utils.book_append_sheet(wb, ws, "Students");
+            
+            // Download file
+            XLSX.writeFile(wb, "student-import-sample.xlsx");
+            
+            document.getElementById('result').textContent = "✅ Đã tạo file student-import-sample.xlsx với 4 sinh viên mẫu";
+        }
+
+        function readStudentFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    console.log('Raw Excel data:', jsonData);
+                    
+                    // Xử lý giống như trong backend
+                    const processedStudents = [];
+                    const errors = [];
+                    
+                    jsonData.forEach((row, index) => {
+                        const rowNum = index + 1;
+                        
+                        // Đọc dữ liệu từ file (giống backend logic)
+                        const studentCode = row['studentCode'] || row['username'];
+                        const fullName = row['fullName'] || row['Họ tên'];
+                        const email = row['email'] || row['Email'];
+                        const phoneNumber = row['phoneNumber'] || row['Số điện thoại'];
+                        const classId = row['classId'] || row['Mã lớp'];
+                        const username = row['username'] || studentCode;
+                        const password = row['password'] || '123456';
+                        
+                        // Kiểm tra dữ liệu bắt buộc
+                        const requiredFields = {
+                            studentCode,
+                            fullName,
+                            email,
+                            phoneNumber,
+                            classId,
+                            username
+                        };
+                        
+                        const missingFields = Object.entries(requiredFields)
+                            .filter(([key, value]) => !value || value.toString().trim() === '')
+                            .map(([key]) => key);
+                        
+                        if (missingFields.length > 0) {
+                            errors.push(`Dòng ${rowNum}: Thiếu thông tin bắt buộc: ${missingFields.join(', ')}`);
+                            return;
+                        }
+                        
+                        // Kiểm tra định dạng email
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(email)) {
+                            errors.push(`Dòng ${rowNum}: Email không hợp lệ: ${email}`);
+                            return;
+                        }
+                        
+                        // Kiểm tra số điện thoại
+                        const phoneRegex = /^\d{10,11}$/;
+                        if (!phoneRegex.test(phoneNumber.replace(/\s/g, ''))) {
+                            errors.push(`Dòng ${rowNum}: Số điện thoại không hợp lệ: ${phoneNumber}`);
+                            return;
+                        }
+                        
+                        processedStudents.push({
+                            rowNum,
+                            studentCode: studentCode.toString().trim(),
+                            fullName: fullName.toString().trim(),
+                            email: email.toString().trim(),
+                            phoneNumber: phoneNumber.toString().trim(),
+                            classId: classId.toString().trim(),
+                            username: username.toString().trim(),
+                            password: password.toString().trim()
+                        });
+                    });
+                    
+                    // Kiểm tra trùng lặp trong file
+                    const duplicateEmails = processedStudents
+                        .map(s => s.email)
+                        .filter((email, index, arr) => arr.indexOf(email) !== index);
+                    
+                    const duplicateUsernames = processedStudents
+                        .map(s => s.username)
+                        .filter((username, index, arr) => arr.indexOf(username) !== index);
+                    
+                    if (duplicateEmails.length > 0) {
+                        errors.push(`Email trùng lặp trong file: ${[...new Set(duplicateEmails)].join(', ')}`);
+                    }
+                    
+                    if (duplicateUsernames.length > 0) {
+                        errors.push(`Username trùng lặp trong file: ${[...new Set(duplicateUsernames)].join(', ')}`);
+                    }
+                    
+                    const result = {
+                        summary: {
+                            totalRows: jsonData.length,
+                            validStudents: processedStudents.length,
+                            errors: errors.length
+                        },
+                        rawData: jsonData,
+                        processedStudents: processedStudents,
+                        errors: errors,
+                        backendLogic: {
+                            note: "Backend sẽ thêm kiểm tra trùng lặp với database",
+                            nextSteps: [
+                                "Kiểm tra email/username tồn tại trong DB",
+                                "Tạo User record với role='STUDENT'", 
+                                "Tạo Student record với user_id",
+                                "Trả về danh sách đã import thành công"
+                            ]
+                        }
+                    };
+                    
+                    document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+                    
+                } catch (error) {
+                    document.getElementById('result').textContent = `❌ Lỗi đọc file: ${error.message}`;
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+    </script>
+</body>
+</html>

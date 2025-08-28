@@ -2,7 +2,7 @@
 .main {
 	max-width: 1200px;
 	margin: 0 auto;
-	padding: 2.5rem 3rem 4rem;
+	padding: 1rem 1.5rem 2rem;
 	font-family: var(--font-family-sans, system-ui, 'Segoe UI', Roboto, Arial);
 }
 

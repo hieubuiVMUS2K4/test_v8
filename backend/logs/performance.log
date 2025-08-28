@@ -338,3 +338,5 @@
 {"event":"EXAM_START","data":{"userId":6,"examId":77,"timestamp":"2025-08-27T07:54:50.818Z"},"timestamp":"2025-08-27T07:54:50.818Z"}
 {"event":"EXAM_START","data":{"userId":6,"examId":77,"timestamp":"2025-08-27T07:54:58.237Z"},"timestamp":"2025-08-27T07:54:58.237Z"}
 {"event":"EXAM_START","data":{"userId":6,"examId":77,"timestamp":"2025-08-27T07:54:58.268Z"},"timestamp":"2025-08-27T07:54:58.268Z"}
+{"event":"EXAM_START","data":{"userId":3,"examId":82,"timestamp":"2025-08-27T17:18:00.255Z"},"timestamp":"2025-08-27T17:18:00.255Z"}
+{"event":"EXAM_START","data":{"userId":3,"examId":82,"timestamp":"2025-08-27T17:18:00.282Z"},"timestamp":"2025-08-27T17:18:00.282Z"}

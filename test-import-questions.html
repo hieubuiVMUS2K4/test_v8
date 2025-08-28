@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Excel Import</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <h1>Test Excel Import Questions</h1>
+    
+    <h2>1. Tạo file Excel test</h2>
+    <button onclick="createTestFile()">Tạo file Excel test</button>
+    
+    <h2>2. Test đọc file Excel</h2>
+    <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="readExcelFile(event)">
+    
+    <h2>3. Kết quả</h2>
+    <pre id="result"></pre>
+
+    <script>
+        function createTestFile() {
+            // Tạo data test theo cấu trúc của bạn
+            const testData = [
+                {
+                    question: "Ai là người sáng lập Microsoft?",
+                    optionA: "Steve Jobs",
+                    optionB: "Bill Gates",
+                    optionC: "Mark Zuckerberg", 
+                    optionD: "Elon Musk",
+                    correctOption: "B"
+                },
+                {
+                    question: "Ngôn ngữ lập trình nào được sử dụng chủ yếu cho web frontend?",
+                    optionA: "Python",
+                    optionB: "Java",
+                    optionC: "JavaScript",
+                    optionD: "C++",
+                    correctOption: "C"
+                },
+                {
+                    question: "Câu hỏi có nhiều đáp án đúng: Ngôn ngữ nào dùng cho web development?",
+                    optionA: "HTML",
+                    optionB: "CSS", 
+                    optionC: "JavaScript",
+                    optionD: "Python",
+                    correctOption: "A,B,C"
+                }
+            ];
+
+            // Tạo workbook
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(testData);
+            
+            XLSX.utils.book_append_sheet(wb, ws, "Questions");
+            
+            // Download file
+            XLSX.writeFile(wb, "test-questions.xlsx");
+            
+            document.getElementById('result').textContent = "Đã tạo file test-questions.xlsx với 3 câu hỏi test";
+        }
+
+        function readExcelFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    console.log('Raw Excel data:', jsonData);
+                    
+                    // Xử lý giống như trong TopicManagementPage
+                    const questions = jsonData.map((row, index) => {
+                        const questionText = row.question || row.Question || row['Câu hỏi'] || row['câu hỏi'] || '';
+                        
+                        if (!questionText || questionText.trim() === '') {
+                            return null;
+                        }
+
+                        const optionA = (row.optionA || row.OptionA || row['Đáp án A'] || row['đáp án A'] || '').toString();
+                        const optionB = (row.optionB || row.OptionB || row['Đáp án B'] || row['đáp án B'] || '').toString();
+                        const optionC = (row.optionC || row.OptionC || row['Đáp án C'] || row['đáp án C'] || '').toString();
+                        const optionD = (row.optionD || row.OptionD || row['Đáp án D'] || row['đáp án D'] || '').toString();
+
+                        const correctOption = (row.correctOption || row.CorrectOption || row['Đáp án đúng'] || row['đáp án đúng'] || row.correctAnswer || '').toString().toUpperCase();
+                        
+                        const options = [];
+                        if (optionA.trim()) options.push({ text: optionA.trim(), isCorrect: false });
+                        if (optionB.trim()) options.push({ text: optionB.trim(), isCorrect: false });
+                        if (optionC.trim()) options.push({ text: optionC.trim(), isCorrect: false });
+                        if (optionD.trim()) options.push({ text: optionD.trim(), isCorrect: false });
+
+                        if (options.length < 2) {
+                            return null;
+                        }
+
+                        const correctAnswers = correctOption.split(',').map(s => s.trim()).filter(s => s);
+                        
+                        correctAnswers.forEach(answer => {
+                            switch(answer) {
+                                case 'A':
+                                    if (options[0]) options[0].isCorrect = true;
+                                    break;
+                                case 'B':
+                                    if (options[1]) options[1].isCorrect = true;
+                                    break;
+                                case 'C':
+                                    if (options[2]) options[2].isCorrect = true;
+                                    break;
+                                case 'D':
+                                    if (options[3]) options[3].isCorrect = true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        });
+
+                        if (!options.some(opt => opt.isCorrect)) {
+                            options[0].isCorrect = true;
+                        }
+
+                        const questionType = correctAnswers.length > 1 ? 'multiple_choice' : 'single_choice';
+
+                        return {
+                            question: questionText.trim(),
+                            options: options,
+                            type: questionType
+                        };
+                    }).filter(q => q !== null);
+                    
+                    const result = {
+                        rawData: jsonData,
+                        processedQuestions: questions,
+                        summary: {
+                            totalRows: jsonData.length,
+                            validQuestions: questions.length,
+                            singleChoice: questions.filter(q => q.type === 'single_choice').length,
+                            multipleChoice: questions.filter(q => q.type === 'multiple_choice').length
+                        }
+                    };
+                    
+                    document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+                    
+                } catch (error) {
+                    document.getElementById('result').textContent = `Lỗi đọc file: ${error.message}`;
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+    </script>
+</body>
+</html>

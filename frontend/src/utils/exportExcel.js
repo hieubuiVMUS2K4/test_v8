@@ -68,9 +68,8 @@ export const exportExamStatistics = (statistics) => {
         'Khoa': dept.department_name,
         'Ngành': dept.major_name,
         'Tổng sinh viên': dept.total_students,
-        'Tổng bài thi': dept.total_exams,
-        'Bài thi đạt': dept.passed_exams,
-        'Bài thi không đạt': dept.failed_exams,
+        'SV đạt': dept.passed_students,
+        'SV không đạt': dept.failed_students,
         'Điểm trung bình': dept.average_score
       }));
       

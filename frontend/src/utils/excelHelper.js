@@ -2,51 +2,37 @@ import * as XLSX from 'xlsx';
 
 // Create a sample Excel template for question import
 export function createQuestionTemplateExcel() {
-  // Sample data
+  // Sample data matching user's format
   const data = [
     {
-      question: "Câu hỏi mẫu 1?",
-      optionA: "Đáp án A",
-      optionB: "Đáp án B",
-      optionC: "Đáp án C",
-      optionD: "Đáp án D",
-      correctAnswer: "A",
-      type: "single_choice"
+      question: "Chủ tịch Hồ Chí Minh sinh năm nào?",
+      optionA: "1890",
+      optionB: "1889",
+      optionC: "1891",
+      optionD: "1892",
+      correctOption: "A"
     },
     {
-      question: "Câu hỏi mẫu 2?",
-      optionA: "Đáp án A",
-      optionB: "Đáp án B",
-      optionC: "Đáp án C",
-      optionD: "Đáp án D",
-      correctAnswer: "B",
-      type: "single_choice"
-    },
-    {
-      question: "Câu hỏi mẫu 3 (trắc nghiệm nhiều đáp án)?",
+      question: "Câu hỏi với nhiều đáp án đúng?",
       optionA: "Đáp án A đúng",
-      optionB: "Đáp án B đúng",
+      optionB: "Đáp án B đúng", 
       optionC: "Đáp án C sai",
       optionD: "Đáp án D sai",
-      correctAnswer: "A,B", // Nhiều đáp án đúng, phân cách bằng dấu phẩy
-      type: "multiple_choice"
+      correctOption: "A,B"
     },
     {
-      question: "Câu hỏi mẫu 4?",
-      "Đáp án A": "Nội dung đáp án A", // Định dạng đáp án khác
-      "Đáp án B": "Nội dung đáp án B",
-      "Đáp án C": "Nội dung đáp án C", 
-      "Đáp án D": "Nội dung đáp án D",
-      "Đáp án đúng": "C", // Định dạng tên cột khác
-      "Loại câu hỏi": "single_choice" // Định dạng tên cột khác
+      question: "Câu hỏi mẫu khác?",
+      optionA: "Lựa chọn 1",
+      optionB: "Lựa chọn 2",
+      optionC: "Lựa chọn 3",
+      optionD: "Lựa chọn 4",
+      correctOption: "C"
     }
   ];
 
   // Create workbook and worksheet
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.json_to_sheet(data);
-  
-  // (Removed unused headerComment helper array)
   
   // Add the sheet to workbook
   XLSX.utils.book_append_sheet(wb, ws, "Questions");
@@ -59,27 +45,37 @@ export function createQuestionTemplateExcel() {
     ["- File Excel (.xlsx hoặc .xls)"],
     ["- Sheet đầu tiên chứa dữ liệu câu hỏi"],
     [""],
-    ["2. Cấu trúc dữ liệu:"],
-    ["- question/Câu hỏi: Nội dung câu hỏi (bắt buộc)"],
-    ["- optionA/Đáp án A, optionB/Đáp án B, optionC/Đáp án C, optionD/Đáp án D: Các phương án trả lời (tối thiểu 2 phương án)"],
-    ["- correctAnswer/Đáp án đúng: Đáp án đúng, nhập chữ cái A, B, C hoặc D tương ứng với đáp án đúng"],
-    ["  + Với câu hỏi nhiều đáp án: Liệt kê các đáp án đúng, phân cách bằng dấu phẩy (VD: A,C)"],
-    ["- type/Loại câu hỏi: Loại câu hỏi (single_choice hoặc multiple_choice, mặc định là single_choice)"],
+    ["2. Cấu trúc dữ liệu bắt buộc:"],
+    ["- question: Nội dung câu hỏi (bắt buộc)"],
+    ["- optionA: Đáp án A (bắt buộc)"],
+    ["- optionB: Đáp án B (bắt buộc)"],
+    ["- optionC: Đáp án C (tùy chọn)"],
+    ["- optionD: Đáp án D (tùy chọn)"],
+    ["- correctOption: Đáp án đúng (A, B, C, D hoặc A,B cho nhiều đáp án)"],
     [""],
-    ["3. Các định dạng cột được hỗ trợ:"],
-    ["- Câu hỏi: 'question', 'Question', 'câu hỏi', 'Câu hỏi'"],
-    ["- Đáp án: 'optionA', 'option A', 'Option A', 'đáp án A', 'Đáp án A', 'A'"],
-    ["  (Tương tự cho B, C, D)"],
-    ["- Đáp án đúng: 'correctAnswer', 'correct answer', 'Correct Answer', 'đáp án đúng', 'Đáp án đúng'"],
-    ["- Loại câu hỏi: 'type', 'loại câu hỏi', 'Loại câu hỏi'"],
-    [""],
-    ["4. Lưu ý:"],
+    ["3. Lưu ý quan trọng:"],
     ["- Mỗi hàng là một câu hỏi"],
-    ["- Không để trống cột câu hỏi"],
-    ["- Mỗi câu hỏi phải có ít nhất 2 phương án trả lời"],
-    ["- Nếu không xác định được đáp án đúng, đáp án đầu tiên sẽ được chọn là đúng"],
-    ["- Bạn có thể đánh dấu đáp án đúng bằng cách thêm dấu * vào đầu hoặc cuối của đáp án"],
-    ["  Ví dụ: '*Đây là đáp án đúng' hoặc 'Đây là đáp án đúng*'"]
+    ["- Không để trống cột 'question'"],
+    ["- Mỗi câu hỏi phải có ít nhất 2 phương án trả lời (optionA và optionB)"],
+    ["- Đáp án đúng phải là A, B, C hoặc D"],
+    ["- Đối với câu hỏi nhiều đáp án: A,B hoặc B,C,D (phân cách bằng dấu phẩy)"],
+    ["- Nếu không có correctOption, đáp án A sẽ được chọn làm đáp án đúng"],
+    [""],
+    ["4. Ví dụ:"],
+    ["question: 'Chủ tịch Hồ Chí Minh sinh năm nào?'"],
+    ["optionA: '1890'"],
+    ["optionB: '1889'"],
+    ["optionC: '1891'"],
+    ["optionD: '1892'"],
+    ["correctOption: 'A'"],
+    [""],
+    ["5. Ví dụ câu hỏi nhiều đáp án:"],
+    ["question: 'Những ngôn ngữ lập trình nào sau đây là hướng đối tượng?'"],
+    ["optionA: 'Java'"],
+    ["optionB: 'C++'"],
+    ["optionC: 'Assembly'"],
+    ["optionD: 'HTML'"],
+    ["correctOption: 'A,B'"]
   ]);
   
   // Add the instructions sheet

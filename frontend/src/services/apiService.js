@@ -601,3 +601,77 @@ export async function importStudentsExcel(formData) {
   }
   return data.data || data.students || [];
 }
+
+// ===== ACADEMIC STRUCTURE MANAGEMENT APIs =====
+
+// Department APIs - Note: getDepartments is already defined above at line 259
+
+export async function createDepartment(departmentData) {
+  return fetchApi('/departments', {
+    method: 'POST',
+    body: JSON.stringify(departmentData)
+  });
+}
+
+export async function updateDepartment(id, departmentData) {
+  return fetchApi(`/departments/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(departmentData)
+  });
+}
+
+export async function deleteDepartment(id) {
+  return fetchApi(`/departments/${id}`, {
+    method: 'DELETE'
+  });
+}
+
+// Major APIs
+export async function getMajors() {
+  return fetchApi('/majors');
+}
+
+export async function createMajor(majorData) {
+  return fetchApi('/majors', {
+    method: 'POST',
+    body: JSON.stringify(majorData)
+  });
+}
+
+export async function updateMajor(id, majorData) {
+  return fetchApi(`/majors/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(majorData)
+  });
+}
+
+export async function deleteMajor(id) {
+  return fetchApi(`/majors/${id}`, {
+    method: 'DELETE'
+  });
+}
+
+// Class APIs
+export async function getClasses() {
+  return fetchApi('/classes');
+}
+
+export async function createClass(classData) {
+  return fetchApi('/classes', {
+    method: 'POST',
+    body: JSON.stringify(classData)
+  });
+}
+
+export async function updateClass(id, classData) {
+  return fetchApi(`/classes/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(classData)
+  });
+}
+
+export async function deleteClass(id) {
+  return fetchApi(`/classes/${id}`, {
+    method: 'DELETE'
+  });
+}

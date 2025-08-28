@@ -5,7 +5,8 @@ import {
   FaSpinner, 
   FaExclamationCircle, 
   FaEye, 
-  FaWrench, 
+  FaEdit, 
+  FaTrash,
   FaTimes, 
   FaClock,
   FaTrophy,
@@ -409,15 +410,112 @@ const TopicManagementPage = () => {
 
     setSaving(true);
     try {
-      const formData = new FormData();
-      formData.append('file', importFile);
-      formData.append('topicId', viewingSubject.id);
+      // Đọc file Excel
+      const fileBuffer = await importFile.arrayBuffer();
+      const workbook = XLSX.read(fileBuffer);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const data = XLSX.utils.sheet_to_json(worksheet);
 
-      await importQuestions(formData);
-      alert('Import câu hỏi thành công!');
+      console.log('Excel data:', data);
+
+      if (!data || data.length === 0) {
+        throw new Error('File Excel không có dữ liệu hoặc định dạng không đúng');
+      }
+
+      // Chuyển đổi dữ liệu Excel thành format phù hợp
+      const questions = data.map((row, index) => {
+        console.log(`Processing row ${index + 1}:`, row);
+
+        // Lấy nội dung câu hỏi - hỗ trợ nhiều định dạng cột
+        const questionText = (row.question || row.Question || row['Câu hỏi'] || row['câu hỏi'] || '').toString();
+        
+        if (!questionText || questionText.trim() === '') {
+          console.warn(`Row ${index + 1}: Missing question text`);
+          return null;
+        }
+
+        // Lấy các đáp án - hỗ trợ nhiều định dạng cột
+        const optionA = (row.optionA || row.OptionA || row['Đáp án A'] || row['đáp án A'] || '').toString();
+        const optionB = (row.optionB || row.OptionB || row['Đáp án B'] || row['đáp án B'] || '').toString();
+        const optionC = (row.optionC || row.OptionC || row['Đáp án C'] || row['đáp án C'] || '').toString();
+        const optionD = (row.optionD || row.OptionD || row['Đáp án D'] || row['đáp án D'] || '').toString();
+
+        // Lấy đáp án đúng - hỗ trợ nhiều định dạng cột
+        const correctOption = (row.correctOption || row.CorrectOption || row['Đáp án đúng'] || row['đáp án đúng'] || row.correctAnswer || '').toString().toUpperCase();
+        
+        console.log(`Row ${index + 1} - Question: "${questionText}"`);
+        console.log(`Options: A="${optionA}", B="${optionB}", C="${optionC}", D="${optionD}"`);
+        console.log(`Correct: "${correctOption}"`);
+        
+        // Tạo mảng options
+        const options = [];
+        if (optionA.trim()) options.push({ text: optionA.trim(), isCorrect: false });
+        if (optionB.trim()) options.push({ text: optionB.trim(), isCorrect: false });
+        if (optionC.trim()) options.push({ text: optionC.trim(), isCorrect: false });
+        if (optionD.trim()) options.push({ text: optionD.trim(), isCorrect: false });
+
+        if (options.length < 2) {
+          console.warn(`Row ${index + 1}: Question needs at least 2 options`);
+          return null;
+        }
+
+        // Xác định đáp án đúng
+        const correctAnswers = correctOption.split(',').map(s => s.trim()).filter(s => s);
+        
+        // Đánh dấu đáp án đúng
+        correctAnswers.forEach(answer => {
+          switch(answer) {
+            case 'A':
+              if (options[0]) options[0].isCorrect = true;
+              break;
+            case 'B':
+              if (options[1]) options[1].isCorrect = true;
+              break;
+            case 'C':
+              if (options[2]) options[2].isCorrect = true;
+              break;
+            case 'D':
+              if (options[3]) options[3].isCorrect = true;
+              break;
+            default:
+              console.warn(`Invalid correct answer option: ${answer}`);
+              break;
+          }
+        });
+
+        // Nếu không có đáp án đúng nào được đánh dấu, đặt đáp án đầu tiên là đúng
+        if (!options.some(opt => opt.isCorrect)) {
+          console.warn(`Row ${index + 1}: No correct answer specified, setting first option as correct`);
+          options[0].isCorrect = true;
+        }
+
+        // Xác định loại câu hỏi
+        const questionType = correctAnswers.length > 1 ? 'multiple_choice' : 'single_choice';
+
+        console.log(`Row ${index + 1} - Final options:`, options.map((opt, i) => `${String.fromCharCode(65+i)}: ${opt.text} (${opt.isCorrect ? 'CORRECT' : 'wrong'})`));
+
+        return {
+          question: questionText.trim(),
+          options: options,
+          type: questionType
+        };
+      }).filter(q => q !== null); // Loại bỏ các câu hỏi không hợp lệ
+
+      console.log('Processed questions:', questions);
+
+      if (questions.length === 0) {
+        throw new Error('Không có câu hỏi hợp lệ nào để import. Vui lòng kiểm tra lại định dạng file.');
+      }
+
+      // Gọi API import
+      console.log('Calling importQuestions API with:', { topicId: viewingSubject.id, questionsCount: questions.length });
+      await importQuestions(viewingSubject.id, questions);
+      alert(`Import thành công ${questions.length} câu hỏi!`);
       closeImportModal();
       handleViewQuestions(viewingSubject);
     } catch (err) {
+      console.error('Import error:', err);
       alert('Lỗi import: ' + (err.message || 'Không thể import'));
     } finally {
       setSaving(false);
@@ -564,7 +662,7 @@ const TopicManagementPage = () => {
                         title="Xem câu hỏi"
                         disabled={saving}
                       >
-                        <FaEye style={{fontSize:'0.9rem'}} />
+                        <FaEye />
                       </button>
                       <button 
                         className={`${styles.actionBtn} ${styles.editBtn}`}
@@ -572,7 +670,7 @@ const TopicManagementPage = () => {
                         title="Sửa chuyên đề"
                         disabled={saving}
                       >
-                        <FaWrench style={{fontSize:'0.9rem'}} />
+                        <FaEdit />
                       </button>
                       <button 
                         className={`${styles.actionBtn} ${styles.deleteBtn}`}
@@ -580,7 +678,7 @@ const TopicManagementPage = () => {
                         title="Xóa chuyên đề"
                         disabled={saving}
                       >
-                        <FaTimes style={{fontSize:'0.85rem'}} />
+                        <FaTrash />
                       </button>
                     </div>
                   </td>
@@ -678,7 +776,7 @@ const TopicManagementPage = () => {
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <h2>
-                <FaWrench />
+                <FaEdit />
                 Sửa chuyên đề
               </h2>
               <button className={styles.closeBtn} onClick={closeEditModal}>
@@ -792,7 +890,7 @@ const TopicManagementPage = () => {
                               title="Sửa câu hỏi"
                               disabled={saving}
                             >
-                              <FaWrench />
+                              <FaEdit />
                             </button>
                             <button 
                               className={`${styles.actionBtn} ${styles.deleteBtn}`} 
@@ -800,7 +898,7 @@ const TopicManagementPage = () => {
                               title="Xóa câu hỏi"
                               disabled={saving}
                             >
-                              <FaTimes />
+                              <FaTrash />
                             </button>
                           </div>
                         </div>
@@ -899,7 +997,7 @@ const TopicManagementPage = () => {
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <h2>
-                <FaWrench />
+                <FaEdit />
                 Sửa câu hỏi
               </h2>
               <button className={styles.closeBtn} onClick={closeEditQuestionModal}>

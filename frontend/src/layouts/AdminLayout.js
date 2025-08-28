@@ -30,6 +30,9 @@ const AdminLayout = ({ children, title }) => {
           <Link to="/admin/students" className="menu-item">
             👥 Quản lý sinh viên
           </Link>
+          <Link to="/admin/structure" className="menu-item">
+            🏢 Quản lý khoa/ngành/lớp
+          </Link>
           <Link to="/admin/reports" className="menu-item">
             📈 Báo cáo
           </Link>
